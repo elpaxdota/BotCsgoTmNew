@@ -9,7 +9,20 @@
 #import <Realm/Realm.h>
 
 @interface ItemModel : RLMObject
-<# Add properties here to define the model #>
+
+@property NSString *classId;
+@property NSString *instanceId;
+@property NSString *marketName;
+@property NSString *hashName;
+@property NSInteger minPrice;
+@property NSInteger maxOrder;
+@property NSInteger quantity;
+@property NSInteger budget;
+@property NSInteger buyerPays;
+@property NSInteger youReceive;
+
+- (id) initWithServerResponse:(NSDictionary*)responseObject;
+
 @end
 
 // This protocol enables typed collections. i.e.:

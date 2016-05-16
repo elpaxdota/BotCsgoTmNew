@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10174" systemVersion="15E65" minimumToolsVersion="Automatic">
+    <entity name="Item" syncable="YES">
+        <attribute name="budget" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="classId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hashName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="instanceId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="marketName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="maxOrder" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="minPrice" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="quantity" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Item" positionX="-54" positionY="-9" width="128" height="163"/>
+    </elements>
+</model>
