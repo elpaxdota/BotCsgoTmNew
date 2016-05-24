@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2E068510F1DBDA07E8759712 /* Pods_BotCsgoTmNew_BotCsgoTmNewUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020C9BECE207CC8E6D408624 /* Pods_BotCsgoTmNew_BotCsgoTmNewUITests.framework */; };
 		75298C9EFAC5F9E8705689B9 /* Pods_BotCsgoTmNewUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15F32821D65EA5D9C8FDBBDF /* Pods_BotCsgoTmNewUITests.framework */; };
+		9A27C9F81CF37600005D5919 /* SteamManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A27C9F71CF37600005D5919 /* SteamManager.m */; };
+		9A27C9FA1CF38209005D5919 /* JSONData.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9A27C9F91CF38209005D5919 /* JSONData.txt */; };
 		9A8E17D91CE3D6C000D23CF0 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9A8E17D81CE3D6C000D23CF0 /* Realm.framework */; };
 		9A8E17DB1CE3D71300D23CF0 /* Realm.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9A8E17D81CE3D6C000D23CF0 /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9A8E17DE1CE3D72E00D23CF0 /* ItemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A8E17DD1CE3D72E00D23CF0 /* ItemModel.m */; };
@@ -78,6 +80,9 @@
 		61AC8BC29839F101431265FA /* Pods-BotCsgoTmNew.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BotCsgoTmNew.release.xcconfig"; path = "Pods/Target Support Files/Pods-BotCsgoTmNew/Pods-BotCsgoTmNew.release.xcconfig"; sourceTree = "<group>"; };
 		761233A019A4067679BFE3E3 /* Pods-BotCsgoTmNewTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BotCsgoTmNewTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BotCsgoTmNewTests/Pods-BotCsgoTmNewTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7E777D81C14FF0888F6C4AA8 /* Pods-BotCsgoTmNewTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BotCsgoTmNewTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BotCsgoTmNewTests/Pods-BotCsgoTmNewTests.release.xcconfig"; sourceTree = "<group>"; };
+		9A27C9F61CF37600005D5919 /* SteamManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SteamManager.h; sourceTree = "<group>"; };
+		9A27C9F71CF37600005D5919 /* SteamManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SteamManager.m; sourceTree = "<group>"; };
+		9A27C9F91CF38209005D5919 /* JSONData.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JSONData.txt; sourceTree = "<group>"; };
 		9A8E17D81CE3D6C000D23CF0 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Realm.framework; sourceTree = "<group>"; };
 		9A8E17DC1CE3D72E00D23CF0 /* ItemModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemModel.h; sourceTree = "<group>"; };
 		9A8E17DD1CE3D72E00D23CF0 /* ItemModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemModel.m; sourceTree = "<group>"; };
@@ -164,6 +169,15 @@
 			name = Controllers;
 			sourceTree = "<group>";
 		};
+		9A27C9F51CF33AF8005D5919 /* SteamManager */ = {
+			isa = PBXGroup;
+			children = (
+				9A27C9F61CF37600005D5919 /* SteamManager.h */,
+				9A27C9F71CF37600005D5919 /* SteamManager.m */,
+			);
+			name = SteamManager;
+			sourceTree = "<group>";
+		};
 		9A95563D1CDF4DC900D2FEA6 = {
 			isa = PBXGroup;
 			children = (
@@ -190,6 +204,7 @@
 		9A9556481CDF4DC900D2FEA6 /* BotCsgoTmNew */ = {
 			isa = PBXGroup;
 			children = (
+				9A27C9F51CF33AF8005D5919 /* SteamManager */,
 				9A9556831CDF8E5000D2FEA6 /* Model */,
 				9A95567C1CDF5B4600D2FEA6 /* ServerManager */,
 				9A09BE611CE4B09D004081E8 /* Controllers */,
@@ -199,6 +214,7 @@
 				9A9556571CDF4DCA00D2FEA6 /* Main.storyboard */,
 				9A95565A1CDF4DCA00D2FEA6 /* Info.plist */,
 				9A9556521CDF4DCA00D2FEA6 /* BotCsgoTmNew.xcdatamodeld */,
+				9A27C9F91CF38209005D5919 /* JSONData.txt */,
 				9A95564C1CDF4DC900D2FEA6 /* Supporting Files */,
 			);
 			path = BotCsgoTmNew;
@@ -374,6 +390,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9A27C9FA1CF38209005D5919 /* JSONData.txt in Resources */,
 				9A9556561CDF4DCA00D2FEA6 /* Assets.xcassets in Resources */,
 				9A9556591CDF4DCA00D2FEA6 /* Main.storyboard in Resources */,
 			);
@@ -527,6 +544,7 @@
 				9A8E17DE1CE3D72E00D23CF0 /* ItemModel.m in Sources */,
 				9A9556511CDF4DC900D2FEA6 /* MainViewController.m in Sources */,
 				9A9556541CDF4DCA00D2FEA6 /* BotCsgoTmNew.xcdatamodeld in Sources */,
+				9A27C9F81CF37600005D5919 /* SteamManager.m in Sources */,
 				9A95564E1CDF4DC900D2FEA6 /* main.m in Sources */,
 				9A95564B1CDF4DC900D2FEA6 /* AppDelegate.m in Sources */,
 			);

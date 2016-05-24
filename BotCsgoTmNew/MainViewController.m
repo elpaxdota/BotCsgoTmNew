@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import "ServerManager.h"
+#import "SteamManager.h"
 #import "ItemModel.h"
 
 //==========   Keys for Save and Load   =======
@@ -30,15 +31,19 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 - (IBAction)startBotAction:(NSButton *)sender;
 - (IBAction)stopBotAction:(NSButton *)sender;
 
+- (IBAction)testButtonAction:(NSButton *)sender;
+
 //==============   Data for TableView   =======
 @property RLMResults<ItemModel *> *items;
 
 //==============   Help Properties   ==========
 @property (assign, nonatomic) NSInteger countItemsIndex;
+@property (strong, nonatomic) NSString *offerId;
 
 
 //==============   Timers   ===================
 @property (strong, nonatomic) NSTimer *mainRefreshDataTimer;
+@property (strong, nonatomic) NSTimer *receiptTradeOffersTimer;
 
 @end
 
@@ -70,12 +75,124 @@ static NSString *kSaveComissionKey   = @"KeyComission";
         self.countItemsIndex = 0;
         
         self.mainRefreshDataTimer = nil;
-        
     }
     return self;
 }
 
+#pragma mark - Steam API
+
+- (void) getTradeOfferWithOfferId:(NSString*)offerId
+{
+    [[SteamManager sharedManager] getTradeOfferWithId:offerId onSuccess:^(NSString *response) {
+        
+       // NSLog(@"%@", response);
+        
+        NSRange range = [response rangeOfString:@"О не-е-е-е-е-е-е-т!"];
+        
+        if (range.location != NSNotFound)
+        {
+            NSLog(@"PartnerId or SessionId is NIL!");
+        }
+        else
+        {
+            NSString *partnerId = [self getPartnerIdWithResponse:response];
+            NSString *sessionId = [self getSessionIdWithResponse:response];
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                
+                [self acceptTradeOfferWithOfferId:self.offerId sessionId:sessionId partnerId:partnerId];
+                
+            });
+        }
+        
+        
+        
+    } onFailure:^(NSError *error) {
+        NSLog(@"%@", [error localizedDescription]);
+    }];
+}
+
+- (void) acceptTradeOfferWithOfferId:(NSString*)offerId
+                           sessionId:(NSString*)sessionId
+                           partnerId:(NSString*)partnerId
+{
+    [[SteamManager sharedManager] acceptTradeOfferWithTradeOfferId:offerId
+                                                         sessionId:sessionId
+                                                         partnerId:partnerId
+    onSuccess:^(NSString *response) {
+        
+        if (response)
+        {
+            NSLog(@"Accept offer response: %@", response);
+        }
+        else
+        {
+            NSLog(@"Trade is accepted!");
+        }
+        
+    } onFailure:^(NSError *error) {
+        NSLog(@"acceptTradeOfferWithTradeOfferId error = %@", [error localizedDescription]);
+    }];
+}
+
 #pragma mark - Csgo.tm API
+
+- (void) checkItemStatus
+{
+    [[ServerManager sharedManager]
+     checkItemsStatusWithAPIKey:self.apiKeyField.stringValue
+     onSuccess:^(NSArray *trades) {
+         
+         if ([trades count] > 0)
+         {
+             for (NSDictionary *dict in trades)
+             {
+                 //если статус предмета = 4(вещь готова к выводу)
+                 if ([[dict objectForKey:@"ui_status"] isEqualToString:@"4"])
+                 {
+                     //получаем ид бота
+                     NSString *botId = [dict objectForKey:@"ui_bid"];
+                     BOOL fromBot = YES;
+                     
+                     //получаем вещь от бота
+                     [self sendItemFromBotWithBotId:botId fromBot:fromBot];
+                     
+                     break;
+                 }
+             }
+         }
+         
+     }
+     onFailure:^(NSError *error) {
+         NSLog(@"changeOrderWithItem %@", [error description]);
+     }];
+}
+
+- (void) sendItemFromBotWithBotId:(NSString*)botId
+                          fromBot:(BOOL)fromBot
+{
+    [[ServerManager sharedManager]
+     sendItemFromBotWithAPIKey:self.apiKeyField.stringValue
+     fromBot:fromBot
+     botId:botId
+     onSuccess:^(NSString *offerId) {
+         
+         //если офферид уже готов принимаем его
+         if (offerId != nil)
+         {
+             self.offerId = offerId;
+             
+             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                 //через 5 сек делаем первый запрос к стиму
+                 [self getTradeOfferWithOfferId:offerId];
+                 
+             });
+         }
+        
+    } onFailure:^(NSError *error) {
+        NSLog(@"changeOrderWithItem %@", [error description]);
+    }];
+}
 
 - (void) changeOrderWithItem:(ItemModel*)item
 {
@@ -318,6 +435,56 @@ static NSString *kSaveComissionKey   = @"KeyComission";
     }
 }
 
+- (NSString*) getSessionIdWithResponse:(NSString*)response
+{
+    NSString *result = response;
+    
+    //ищем "var g_sessionID" в ответе
+    NSRange range = [result rangeOfString:@"var g_sessionID"];
+    
+    //обрезаем от "var g_sessionID" + 19 символа
+    if (range.location != NSNotFound)
+    {
+        result = [result substringFromIndex:range.location + 19];
+    }
+    
+    //ищем ";"
+    NSRange range2 = [result rangeOfString:@";"];
+    
+    //обрезаем по ";"
+    if (range2.location != NSNotFound)
+    {
+        result = [result substringToIndex:range2.location - 1];
+    }
+    
+    return result;
+}
+
+- (NSString*) getPartnerIdWithResponse:(NSString*)response
+{
+    NSString *result = response;
+    
+    //ищем "var g_ulTradePartnerSteamID" в ответе
+    NSRange range = [result rangeOfString:@"var g_ulTradePartnerSteamID"];
+    
+    //обрезаем от "var g_ulTradePartnerSteamID" + 31 символа
+    if (range.location != NSNotFound)
+    {
+        result = [result substringFromIndex:range.location + 31];
+    }
+    
+    //ищем "'"
+    NSRange range2 = [result rangeOfString:@"'"];
+    
+    //обрезаем по "'"
+    if (range2.location != NSNotFound)
+    {
+        result = [result substringToIndex:range2.location];
+    }
+    
+    return result;
+}
+
 - (NSString*) getInstanceId
 {
     NSString *instanceId = self.urlField.stringValue;
@@ -405,6 +572,11 @@ static NSString *kSaveComissionKey   = @"KeyComission";
                                                                selector:@selector(launchRefreshItemInfo)
                                                                userInfo:nil
                                                                 repeats:YES];
+    self.receiptTradeOffersTimer = [NSTimer scheduledTimerWithTimeInterval:30
+                                                                    target:self
+                                                                  selector:@selector(checkItemStatus)
+                                                                  userInfo:nil
+                                                                   repeats:YES];
 }
 
 - (IBAction)stopBotAction:(NSButton *)sender
@@ -414,6 +586,18 @@ static NSString *kSaveComissionKey   = @"KeyComission";
         [self.mainRefreshDataTimer invalidate];
         self.mainRefreshDataTimer = nil;
     }
+    
+    if ([self.receiptTradeOffersTimer isValid])
+    {
+        [self.receiptTradeOffersTimer invalidate];
+        self.receiptTradeOffersTimer = nil;
+    }
+}
+
+- (IBAction)testButtonAction:(NSButton *)sender
+{
+    //call test method
+    
 }
 
 

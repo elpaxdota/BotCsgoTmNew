@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class Item, ItemModel;
+@class ItemModel;
 
 @interface ServerManager : NSObject
 
@@ -17,6 +17,16 @@
 
 
 //======================   API Methods   ========================
+
+- (void) sendItemFromBotWithAPIKey:(NSString*)apiKey
+                           fromBot:(BOOL)fromBot
+                             botId:(NSString*)botId
+                         onSuccess:(void(^)(NSString *offerId))success
+                         onFailure:(void(^)(NSError *error))failure;
+
+- (void) checkItemsStatusWithAPIKey:(NSString*)apiKey
+                          onSuccess:(void(^)(NSArray *trades))success
+                          onFailure:(void(^)(NSError *error))failure;
 
 - (void) getItemInfoWithInstanceId:(NSString*)instanceId
                            classId:(NSString*)classId

@@ -42,6 +42,80 @@
     return self;
 }
 
+//==============   Отправка вещи от бота   =======================
+
+- (void) sendItemFromBotWithAPIKey:(NSString*)apiKey
+                           fromBot:(BOOL)fromBot
+                             botId:(NSString*)botId
+                         onSuccess:(void(^)(NSString *offerId))success
+                         onFailure:(void(^)(NSError *error))failure
+{
+    NSString *inOrOut;
+    
+    if (fromBot == YES)
+    {
+        inOrOut = @"out";
+    }
+    else
+    {
+        inOrOut = @"in";
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"ItemRequest/%@/%@/", inOrOut, botId];
+    
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+    
+    [self.sessionManager GET:urlString
+                  parameters:params
+                    progress:nil
+                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                         
+                         NSString *tradeOfferId = nil;
+                         
+                         tradeOfferId = [responseObject objectForKey:@"trade"];
+                         
+                         if (success)
+                         {
+                             success(tradeOfferId);
+                         }
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (failure)
+        {
+            failure(error);
+        }
+    }];
+}
+
+//==============   Проверяю статус вещей   =======================
+
+- (void) checkItemsStatusWithAPIKey:(NSString*)apiKey
+                          onSuccess:(void(^)(NSArray *trades))success
+                          onFailure:(void(^)(NSError *error))failure
+{
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+   
+    [self.sessionManager GET:@"Trades/"
+                  parameters:params
+                    progress:nil
+                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+                         NSArray *ordersArray = responseObject;
+                         
+                         if (success)
+                         {
+                             success(ordersArray);
+                         }
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        if (failure)
+        {
+            failure(error);
+        }
+    }];
+}
+
+
 //==============   Изменяю цену на ордер   =======================
 
 - (void) changeOrderWithInstanceId:(NSString*)instanceId
@@ -55,7 +129,10 @@
     
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
     
-    [self.sessionManager GET:urlString parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    [self.sessionManager GET:urlString
+                  parameters:params
+                    progress:nil
+                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         
         NSLog(@"изменение ордера:  %@", responseObject);
         
