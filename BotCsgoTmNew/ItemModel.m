@@ -24,6 +24,7 @@
         self.budget = 0;
         self.buyerPays = 0;
         self.youReceive = 0;
+        self.sellOrNot = 1;
         
         NSArray *buyOffers = [responseObject objectForKey:@"buy_offers"];
         

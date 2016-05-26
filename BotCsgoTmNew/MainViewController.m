@@ -37,6 +37,7 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 @property RLMResults<ItemModel *> *items;
 
 //==============   Help Properties   ==========
+@property (assign, nonatomic) NSInteger countSellItemsIndex;
 @property (assign, nonatomic) NSInteger countItemsIndex;
 @property (strong, nonatomic) NSString *offerId;
 
@@ -44,6 +45,9 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 //==============   Timers   ===================
 @property (strong, nonatomic) NSTimer *mainRefreshDataTimer;
 @property (strong, nonatomic) NSTimer *receiptTradeOffersTimer;
+@property (strong, nonatomic) NSTimer *pingPongTimer;
+@property (strong, nonatomic) NSTimer *toSellTimer;
+@property (strong, nonatomic) NSTimer *updateInventoryTimer;
 
 @end
 
@@ -73,8 +77,13 @@ static NSString *kSaveComissionKey   = @"KeyComission";
     if (self)
     {
         self.countItemsIndex = 0;
+        self.countSellItemsIndex = 0;
         
         self.mainRefreshDataTimer = nil;
+        self.receiptTradeOffersTimer = nil;
+        self.pingPongTimer = nil;
+        self.toSellTimer = nil;
+        self.updateInventoryTimer = nil;
     }
     return self;
 }
@@ -137,22 +146,51 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 
 #pragma mark - Csgo.tm API
 
+- (void) updateInventory
+{
+    [[ServerManager sharedManager]
+     updateInventoryWithAPIKey:self.apiKeyField.stringValue
+     onSuccess:^(NSString *message) {
+        
+         NSLog(@"updateInventory succes = %@", message);
+        
+    } onFailure:^(NSError *error) {
+        
+        NSLog(@"updateInventory error = %@", error);
+        
+    }];
+}
+
 - (void) checkItemStatus
 {
     [[ServerManager sharedManager]
      checkItemsStatusWithAPIKey:self.apiKeyField.stringValue
      onSuccess:^(NSArray *trades) {
          
+         NSString *botId = nil;
+         BOOL fromBot;
+         
          if ([trades count] > 0)
          {
              for (NSDictionary *dict in trades)
              {
+                 //если статус предмета = 2(вещь нужно передать боту)
+                 if ([[dict objectForKey:@"ui_status"] isEqualToString:@"2"])
+                 {
+                     botId = @"1";
+                     fromBot = NO;
+                     
+                     //передаем вещь боту
+                     [self sendItemFromBotWithBotId:botId fromBot:fromBot];
+                     
+                     break;
+                 }
                  //если статус предмета = 4(вещь готова к выводу)
-                 if ([[dict objectForKey:@"ui_status"] isEqualToString:@"4"])
+                 else if ([[dict objectForKey:@"ui_status"] isEqualToString:@"4"])
                  {
                      //получаем ид бота
-                     NSString *botId = [dict objectForKey:@"ui_bid"];
-                     BOOL fromBot = YES;
+                     botId = [dict objectForKey:@"ui_bid"];
+                     fromBot = YES;
                      
                      //получаем вещь от бота
                      [self sendItemFromBotWithBotId:botId fromBot:fromBot];
@@ -332,6 +370,29 @@ static NSString *kSaveComissionKey   = @"KeyComission";
     }];
 }
 
+- (void) pingPong
+{
+    [[ServerManager sharedManager] pingPongWithAPIKey:self.apiKeyField.stringValue];
+}
+
+- (void) itemToSellWithItem:(ItemModel*)item
+{
+    [[ServerManager sharedManager]
+     itemToSellWithInstanceId:item.instanceId
+     classId:item.classId
+     apiKey:self.apiKeyField.stringValue
+     price:[NSString stringWithFormat:@"%ld", item.buyerPays]
+     onSuccess:^(NSString *message) {
+         
+         NSLog(@"%@", message);
+         
+    } onFailure:^(NSError *error) {
+        
+        NSLog(@"Выставление на продажу = %@", [error localizedDescription]);
+        
+    }];
+}
+
 #pragma mark - NSTableViewDelegate
 
 - (BOOL)tableView:(NSTableView *)tableView shouldEditTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
@@ -342,6 +403,7 @@ static NSString *kSaveComissionKey   = @"KeyComission";
     */
     if ([tableColumn.identifier isEqualToString:@"buyerPays"] ||
         [tableColumn.identifier isEqualToString:@"quantity"] ||
+        [tableColumn.identifier isEqualToString:@"sellOrNot"] ||
         [tableColumn.identifier isEqualToString:@"budget"])
     {
         return YES;
@@ -415,6 +477,67 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 }
 
 #pragma mark - Private Methods
+
+- (void) launchRefreshItemToSell
+{
+    ItemModel *item = self.items[self.countSellItemsIndex];
+    
+    if (item.sellOrNot != 0)
+    {
+        [self checkSteamInventiryWithItemOnSuccess:^(NSDictionary *items) {
+            
+            NSInteger steamItemCount = 0;
+            
+            for (NSString *key in items)
+            {
+                NSDictionary *dic = [items objectForKey:key];
+                
+                if ([item.classId isEqualToString:[dic objectForKey:@"classid"]]/* &&
+                    [item.instanceId isEqualToString:[dic objectForKey:@"instanceid"]]*/)
+                {
+                    steamItemCount++;
+                }
+            }
+            
+            [self checkTradesCsgoTmWithItemOnSuccess:^(NSArray *trades) {
+                
+                NSInteger tmItemCoont = 0;
+                
+                for (NSDictionary *dic in trades)
+                {
+                    if ([item.classId isEqualToString:[dic objectForKey:@"i_classid"]] &&
+                        [item.instanceId isEqualToString:[dic objectForKey:@"i_instanceid"]] &&
+                        [@"1" isEqualToString:[dic objectForKey:@"ui_status"]])
+                    {
+                        tmItemCoont++;
+                    }
+                }
+                
+                //NSLog(@"%@ Steam count = %ld, Tm count = %ld", item.marketName, steamItemCount, tmItemCoont);
+                
+                //если в стиме такого товара больше чем выставленно на тм
+                //и макс кол-во лотов больше чем уже выставленно
+                if (steamItemCount > tmItemCoont && item.sellOrNot > tmItemCoont)
+                {
+                    //делаем запрос на выставление товара
+                    [self itemToSellWithItem:item];
+                }
+            }];
+        }];
+    }
+    
+    if (self.items.count)
+    {
+        self.countSellItemsIndex++;
+        
+        // когда индекс станет равным количеству объектов в Realm - обнуляем его
+        if (self.countSellItemsIndex == self.items.count)
+        {
+            self.countSellItemsIndex = 0;
+        }
+    }
+
+}
 
 - (void) launchRefreshItemInfo
 {
@@ -572,11 +695,30 @@ static NSString *kSaveComissionKey   = @"KeyComission";
                                                                selector:@selector(launchRefreshItemInfo)
                                                                userInfo:nil
                                                                 repeats:YES];
+    
     self.receiptTradeOffersTimer = [NSTimer scheduledTimerWithTimeInterval:30
                                                                     target:self
                                                                   selector:@selector(checkItemStatus)
                                                                   userInfo:nil
                                                                    repeats:YES];
+    
+    self.pingPongTimer = [NSTimer scheduledTimerWithTimeInterval:180
+                                                          target:self
+                                                        selector:@selector(pingPong)
+                                                        userInfo:nil
+                                                         repeats:YES];
+    
+    self.toSellTimer = [NSTimer scheduledTimerWithTimeInterval:15
+                                                          target:self
+                                                        selector:@selector(launchRefreshItemToSell)
+                                                        userInfo:nil
+                                                         repeats:YES];
+    
+    self.updateInventoryTimer = [NSTimer scheduledTimerWithTimeInterval:304
+                                                                 target:self
+                                                               selector:@selector(updateInventory)
+                                                               userInfo:nil
+                                                                repeats:YES];
 }
 
 - (IBAction)stopBotAction:(NSButton *)sender
@@ -592,12 +734,30 @@ static NSString *kSaveComissionKey   = @"KeyComission";
         [self.receiptTradeOffersTimer invalidate];
         self.receiptTradeOffersTimer = nil;
     }
+    
+    if ([self.pingPongTimer isValid])
+    {
+        [self.pingPongTimer invalidate];
+        self.pingPongTimer = nil;
+    }
+    
+    if ([self.toSellTimer isValid])
+    {
+        [self.toSellTimer invalidate];
+        self.toSellTimer = nil;
+    }
+    
+    if ([self.updateInventoryTimer isValid])
+    {
+        [self.updateInventoryTimer invalidate];
+        self.updateInventoryTimer = nil;
+    }
 }
 
 - (IBAction)testButtonAction:(NSButton *)sender
 {
     //call test method
-    
+    [self launchRefreshItemToSell];
 }
 
 
@@ -634,6 +794,45 @@ static NSString *kSaveComissionKey   = @"KeyComission";
     
     return YES;
 }
+
+#pragma  mark - Inventory
+
+- (void) checkSteamInventiryWithItemOnSuccess:(void(^)(NSDictionary *items))success
+{
+    [[SteamManager sharedManager] checkSteamInventoryonSuccess:^(NSDictionary *steamItems) {
+        
+        if (success)
+        {
+            success(steamItems);
+        }
+        
+    } onFailure:^(NSError *error) {
+        
+        NSLog(@"Steam inventory error = %@", error);
+        
+    }];
+}
+
+- (void) checkTradesCsgoTmWithItemOnSuccess:(void(^)(NSArray *trades))success
+{
+    [[ServerManager sharedManager]
+     checkItemsStatusWithAPIKey:self.apiKeyField.stringValue
+     onSuccess:^(NSArray *trades) {
+         
+         if (success)
+         {
+             success(trades);
+         }
+         
+     } onFailure:^(NSError *error) {
+         
+         NSLog(@"Tm inventory error = %@", error);
+         
+     }];
+}
+
+
+
 
 
 @end

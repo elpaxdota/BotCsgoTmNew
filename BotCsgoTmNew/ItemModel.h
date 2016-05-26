@@ -20,6 +20,7 @@
 @property NSInteger budget;
 @property NSInteger buyerPays;
 @property NSInteger youReceive;
+@property NSInteger sellOrNot;
 
 - (id) initWithServerResponse:(NSDictionary*)responseObject;
 

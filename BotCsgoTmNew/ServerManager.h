@@ -18,6 +18,19 @@
 
 //======================   API Methods   ========================
 
+- (void) updateInventoryWithAPIKey:(NSString*)apiKey
+                         onSuccess:(void(^)(NSString *message))success
+                         onFailure:(void(^)(NSError *error))failure;
+
+- (void) itemToSellWithInstanceId:(NSString*)instanceId
+                          classId:(NSString*)classId
+                           apiKey:(NSString*)apiKey
+                            price:(NSString*)price
+                        onSuccess:(void(^)(NSString *message))success
+                        onFailure:(void(^)(NSError *error))failure;
+
+- (void) pingPongWithAPIKey:(NSString*)apiKey;
+
 - (void) sendItemFromBotWithAPIKey:(NSString*)apiKey
                            fromBot:(BOOL)fromBot
                              botId:(NSString*)botId

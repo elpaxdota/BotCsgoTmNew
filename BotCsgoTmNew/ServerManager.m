@@ -13,6 +13,7 @@
 @interface ServerManager ()
 
 @property (strong, nonatomic) AFHTTPSessionManager *sessionManager;
+@property (strong, nonatomic) AFHTTPSessionManager *diffSessionManager;
 
 @end
 
@@ -40,6 +41,138 @@
         self.sessionManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url];
     }
     return self;
+}
+
+//================   Обновляю инвентарь   =======================
+
+/*
+ Пришлось заколхозить в этом методе, т.к. почему то выдает ошибку
+ что то про контент тайп в заголовке
+*/
+- (void) updateInventoryWithAPIKey:(NSString*)apiKey
+                         onSuccess:(void(^)(NSString *message))success
+                         onFailure:(void(^)(NSError *error))failure
+{
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    
+    [manager GET:@"https://csgo.tm/api/UpdateInventory/"
+                  parameters:params
+                    progress:nil
+                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+                         NSString *string = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:[responseObject bytes]]];
+                         
+                         if (success)
+                         {
+                             success(string);
+                         }
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+        if (failure)
+        {
+            failure(error);
+        }
+        
+    }];
+}
+
+//==============   Выставляю новый предмет   =====================
+
+/*
+ Пришлось заколхозить в этом методе, т.к. почему то выдает ошибку
+ что то про контент тайп в заголовке
+ */
+
+- (void) itemToSellWithInstanceId:(NSString*)instanceId
+                      classId:(NSString*)classId
+                       apiKey:(NSString*)apiKey
+                        price:(NSString*)price
+                    onSuccess:(void(^)(NSString *message))success
+                    onFailure:(void(^)(NSError *error))failure
+{
+    /*
+     Т.к. instanceId у всех итемов разный, разработчики ксго тм видимо решили объединить их
+     в один слот. Но при выставлении нового итема нужно смотреть данные именно в стиме, тут 
+     возникают различия и при instanceId = 0 - пишет, что такого нет в инвентаре.
+     Я не стал придумывать ничего и сделал просто рандомный выбор этого параметра, это конечно
+     скажется на скорости выставления, но тут это не так важно
+     */
+    if ([classId isEqualToString:@"310776566"])
+    {
+        int i = arc4random() % 3;
+        
+        if (i == 0)
+        {
+            instanceId = @"0";
+        }
+        else if (i == 1)
+        {
+            instanceId = @"302028390";
+        }
+        else if (i == 2)
+        {
+            instanceId = @"480085569";
+        }
+
+    }
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://csgo.tm/api/SetPrice/new_%@_%@/%@/", classId, instanceId, price];
+    
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
+    
+    [manager
+     GET:urlString
+     parameters:params
+     progress:nil
+     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+         
+         NSString *string = [NSString stringWithFormat:@"%@", [NSString stringWithUTF8String:[responseObject bytes]]];
+         
+         if (success)
+         {
+             success(string);
+         }
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+        if (failure)
+        {
+            failure(error);
+        }
+        
+    }];
+}
+
+//===================   pingPong    ==============================
+
+- (void) pingPongWithAPIKey:(NSString*)apiKey
+{
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+    
+    [self.sessionManager GET:@"PingPong/"
+                  parameters:params
+                    progress:nil
+                     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+        NSLog(@"%@", [error localizedDescription]);
+        
+    }];
 }
 
 //==============   Отправка вещи от бота   =======================
@@ -108,6 +241,7 @@
                          }
         
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
         if (failure)
         {
             failure(error);
@@ -265,7 +399,7 @@
                                      onSuccess:(void(^)(ItemModel *item))success
                                      onFailure:(void(^)(NSError *error))failure
 {
-    NSString *urlString = [NSString stringWithFormat:@"ItemInfo/%@_%@/ru/", classId, instanceId];
+    NSString *urlString = [NSString stringWithFormat:@"ItemInfo/%@_%@/en/", classId, instanceId];
     
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
     

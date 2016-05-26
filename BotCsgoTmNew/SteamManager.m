@@ -182,5 +182,37 @@
                  }];
 }
 
+- (void) checkSteamInventoryonSuccess:(void(^)(NSDictionary *steamItems))success
+                                                        onFailure:(void(^)(NSError *error))failure
+{
+    NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+    sessionConfig.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyAlways;
+    sessionConfig.HTTPCookieStorage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+    
+    AFHTTPSessionManager *sessionManager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:sessionConfig];
+    
+    NSString *urlString = @"http://steamcommunity.com/profiles/76561198275654943/inventory/json/730/2/";
+    
+    [sessionManager
+     GET:urlString
+     parameters:nil
+     progress:nil
+     success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+         
+         NSDictionary *items = [responseObject objectForKey:@"rgInventory"];
+         
+         if (success)
+         {
+             success(items);
+         }
+         
+         
+     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+         
+         NSLog(@"Steam error = %@", error);
+         
+     }];
+}
+
 
 @end

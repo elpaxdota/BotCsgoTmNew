@@ -26,6 +26,9 @@
                                 onSuccess:(void(^)(NSString *response))success
                                 onFailure:(void(^)(NSError *error))failure;
 
+- (void) checkSteamInventoryonSuccess:(void(^)(NSDictionary *steamItems))success
+                            onFailure:(void(^)(NSError *error))failure;
+
 
 
 @end

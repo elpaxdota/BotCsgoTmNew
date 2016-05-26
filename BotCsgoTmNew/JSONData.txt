@@ -1,7 +1,7 @@
-[
+﻿[
 {
     "domain": ".steamcommunity.com",
-    "expirationDate": 1527146494,
+    "expirationDate": 1527321979,
     "hostOnly": false,
     "httpOnly": false,
     "name": "_ga",
@@ -9,12 +9,12 @@
     "secure": false,
     "session": false,
     "storeId": "0",
-    "value": "GA1.2.528559703.1462790759",
+    "value": "GA1.2.1624951785.1464191891",
     "id": 1
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1779368573,
+    "expirationDate": 1779553986,
     "hostOnly": true,
     "httpOnly": false,
     "name": "bCompletedTradeOfferTutorial",
@@ -27,7 +27,7 @@
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1779368564,
+    "expirationDate": 1779553983,
     "hostOnly": true,
     "httpOnly": false,
     "name": "lastCategoryCount",
@@ -40,19 +40,6 @@
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1494589980,
-    "hostOnly": true,
-    "httpOnly": false,
-    "name": "lastext_730",
-    "path": "/",
-    "secure": false,
-    "session": false,
-    "storeId": "0",
-    "value": "0",
-    "id": 4
-},
-{
-    "domain": "steamcommunity.com",
     "hostOnly": true,
     "httpOnly": false,
     "name": "sessionid",
@@ -60,7 +47,19 @@
     "secure": false,
     "session": true,
     "storeId": "0",
-    "value": "48789807bec402e6c5a1e5c6",
+    "value": "faea002800a4362d6587d50c",
+    "id": 4
+},
+{
+    "domain": "steamcommunity.com",
+    "hostOnly": true,
+    "httpOnly": false,
+    "name": "steamCountry",
+    "path": "/",
+    "secure": false,
+    "session": true,
+    "storeId": "0",
+    "value": "RU%7Cf5cccbfa128ec79871b68d4fa4087af1",
     "id": 5
 },
 {
@@ -72,7 +71,7 @@
     "secure": false,
     "session": true,
     "storeId": "0",
-    "value": "76561198083403913%7C%7C16EB9C43B3ACBF7D2140956B1EA61EC7188EA973",
+    "value": "76561198275654943%7C%7C5B5B5298B35CAB26911557A39EC3F68CD33964D4",
     "id": 6
 },
 {
@@ -84,25 +83,25 @@
     "secure": true,
     "session": true,
     "storeId": "0",
-    "value": "76561198083403913%7C%7C4D60C770EEAE2B515828D638739627260AF79CE7",
+    "value": "76561198275654943%7C%7CD57CDCF82D2C983CB67679105884C210BFBF72A6",
     "id": 7
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1778150760,
+    "expirationDate": 1779551876.477799,
     "hostOnly": true,
     "httpOnly": true,
-    "name": "steamMachineAuth76561198083403913",
+    "name": "steamMachineAuth76561198275654943",
     "path": "/",
     "secure": true,
     "session": false,
     "storeId": "0",
-    "value": "A3B0CE0C2CDAFE5B3518CB79D87ED97CFFFD0433",
+    "value": "DACA640A5801215DCFB36A5E22D5785B0CCFFB1E",
     "id": 8
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1466253434.61724,
+    "expirationDate": 1466841877.18703,
     "hostOnly": true,
     "httpOnly": false,
     "name": "steamRememberLogin",
@@ -110,12 +109,12 @@
     "secure": false,
     "session": false,
     "storeId": "0",
-    "value": "76561198083403913%7C%7Cf4c9033670f18f0e5a24d77f6b7c2e64",
+    "value": "76561198275654943%7C%7C2fdcb2b973295f44d0e8406a081d5195",
     "id": 9
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1465247805,
+    "expirationDate": 1465459482,
     "hostOnly": true,
     "httpOnly": false,
     "name": "strInventoryLastContext",
@@ -128,7 +127,7 @@
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1465284095,
+    "expirationDate": 1465459581,
     "hostOnly": true,
     "httpOnly": false,
     "name": "strTradeLastInventoryContext",
@@ -141,7 +140,7 @@
 },
 {
     "domain": "steamcommunity.com",
-    "expirationDate": 1495610493,
+    "expirationDate": 1495785979,
     "hostOnly": true,
     "httpOnly": false,
     "name": "timezoneOffset",
@@ -154,6 +153,19 @@
 },
 {
     "domain": "steamcommunity.com",
+    "expirationDate": 1464250182.449292,
+    "hostOnly": true,
+    "httpOnly": false,
+    "name": "tsTradeOffersLastRead",
+    "path": "/",
+    "secure": false,
+    "session": false,
+    "storeId": "0",
+    "value": "1464247881",
+    "id": 13
+},
+{
+    "domain": "steamcommunity.com",
     "hostOnly": true,
     "httpOnly": true,
     "name": "webTradeEligibility",
@@ -161,7 +173,7 @@
     "secure": false,
     "session": true,
     "storeId": "0",
-    "value": "%7B%22allowed%22%3A1%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A864%2C%22max_sales_per_year%22%3A-1%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D",
-    "id": 13
+    "value": "%7B%22allowed%22%3A1%2C%22allowed_at_time%22%3A0%2C%22steamguard_required_days%22%3A15%2C%22sales_this_year%22%3A0%2C%22max_sales_per_year%22%3A200%2C%22forms_requested%22%3A0%2C%22new_device_cooldown_days%22%3A7%7D",
+    "id": 14
 }
 ]
