@@ -777,7 +777,7 @@
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                 </tableColumn>
-                                                <tableColumn identifier="sellOrNot" width="64" minWidth="10" maxWidth="3.4028234663852886e+38" id="4iW-mZ-kbY">
+                                                <tableColumn identifier="sellOrNot" width="100" minWidth="100" maxWidth="3.4028234663852886e+38" id="4iW-mZ-kbY">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="center" title="Sell">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -813,7 +813,7 @@
                                 </tableHeaderView>
                             </scrollView>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SjF-JJ-V7w">
-                                <rect key="frame" x="1110" y="758" width="343" height="22"/>
+                                <rect key="frame" x="1110" y="738" width="343" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" placeholderString="Enter item URL " drawsBackground="YES" id="NpQ-SL-at6">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -824,7 +824,7 @@
                                 </connections>
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ER8-1y-oK3">
-                                <rect key="frame" x="1486" y="752" width="81" height="32"/>
+                                <rect key="frame" x="1486" y="732" width="81" height="32"/>
                                 <buttonCell key="cell" type="push" title="Add item" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="udq-1v-WGL">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -844,26 +844,15 @@
                                 </buttonCell>
                             </button>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s4H-uO-qeM">
-                                <rect key="frame" x="1110" y="669" width="110" height="22"/>
+                                <rect key="frame" x="1110" y="614" width="128" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" placeholderString="Your discount" drawsBackground="YES" id="FND-gr-rKw">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Usg-NR-xAZ">
-                                <rect key="frame" x="1110" y="712" width="343" height="22"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" placeholderString="Your API key" drawsBackground="YES" id="CUF-SO-SHE">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                                <connections>
-                                    <outlet property="delegate" destination="XfG-lQ-9wD" id="gXM-SK-vKW"/>
-                                </connections>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CYM-J1-Q5m">
-                                <rect key="frame" x="1486" y="705" width="81" height="32"/>
+                                <rect key="frame" x="1486" y="670" width="81" height="32"/>
                                 <buttonCell key="cell" type="push" title="START" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9AS-73-xUT">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -873,7 +862,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5GF-Jk-BuN">
-                                <rect key="frame" x="1486" y="672" width="81" height="32"/>
+                                <rect key="frame" x="1486" y="637" width="81" height="32"/>
                                 <buttonCell key="cell" type="push" title="STOP" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GOZ-1j-djB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -892,8 +881,51 @@
                                     <action selector="testButtonAction:" target="XfG-lQ-9wD" id="IRV-JV-sJr"/>
                                 </connections>
                             </button>
+                            <secureTextField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sfy-Ea-wfr">
+                                <rect key="frame" x="1110" y="677" width="343" height="22"/>
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" placeholderString="Your API Key" drawsBackground="YES" usesSingleLineMode="YES" id="wfc-Lt-76r">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </secureTextFieldCell>
+                            </secureTextField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D2f-8b-Yhf">
+                                <rect key="frame" x="1215" y="768" width="132" height="16"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Add items URL" id="KEi-Lj-KcD">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8i-Tv-mHi">
+                                <rect key="frame" x="1215" y="707" width="132" height="16"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Your API Key" id="dnX-i7-QRi">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dYd-iS-GEr">
+                                <rect key="frame" x="1108" y="644" width="132" height="16"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Your Discount" id="ltk-eo-Ujz">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UMs-u9-abb">
+                                <rect key="frame" x="1108" y="589" width="132" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Your Comission" id="dQo-Gt-5AL">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IDk-dT-npd">
-                                <rect key="frame" x="1110" y="630" width="110" height="22"/>
+                                <rect key="frame" x="1110" y="559" width="128" height="22"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" placeholderString="Your comission" drawsBackground="YES" id="4f4-4H-L7x">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -903,7 +935,7 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="apiKeyField" destination="Usg-NR-xAZ" id="RQK-eH-Yrf"/>
+                        <outlet property="apiKeyField" destination="sfy-Ea-wfr" id="dwE-rW-K4s"/>
                         <outlet property="tableView" destination="avD-MB-b6a" id="Xeo-P9-4ci"/>
                         <outlet property="urlField" destination="SjF-JJ-V7w" id="RTM-ey-naa"/>
                         <outlet property="yourComissionField" destination="IDk-dT-npd" id="6dD-lM-tRw"/>
@@ -912,7 +944,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-55" y="658"/>
+            <point key="canvasLocation" x="-55" y="628"/>
         </scene>
     </scenes>
     <resources>

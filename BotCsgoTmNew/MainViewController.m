@@ -482,8 +482,10 @@ static NSString *kSaveComissionKey   = @"KeyComission";
 {
     ItemModel *item = self.items[self.countSellItemsIndex];
     
+    //если в настройках вещи разрешено продавать
     if (item.sellOrNot != 0)
     {
+        //проверяем кол-во таких вещей в стиме
         [self checkSteamInventiryWithItemOnSuccess:^(NSDictionary *items) {
             
             NSInteger steamItemCount = 0;
@@ -499,17 +501,23 @@ static NSString *kSaveComissionKey   = @"KeyComission";
                 }
             }
             
+            //затем проверяем кол-во на тм
             [self checkTradesCsgoTmWithItemOnSuccess:^(NSArray *trades) {
                 
-                NSInteger tmItemCoont = 0;
+                NSInteger tmItemCount = 0;
                 
                 for (NSDictionary *dic in trades)
                 {
                     if ([item.classId isEqualToString:[dic objectForKey:@"i_classid"]] &&
-                        [item.instanceId isEqualToString:[dic objectForKey:@"i_instanceid"]] &&
-                        [@"1" isEqualToString:[dic objectForKey:@"ui_status"]])
+                        [item.instanceId isEqualToString:[dic objectForKey:@"i_instanceid"]])
                     {
-                        tmItemCoont++;
+                        //считаем и те, что на продаже
+                        //и те, что продали и должны передать боту
+                        if ([@"1" isEqualToString:[dic objectForKey:@"ui_status"]] ||
+                            [@"2" isEqualToString:[dic objectForKey:@"ui_status"]])
+                        {
+                            tmItemCount++;
+                        }
                     }
                 }
                 
@@ -517,10 +525,15 @@ static NSString *kSaveComissionKey   = @"KeyComission";
                 
                 //если в стиме такого товара больше чем выставленно на тм
                 //и макс кол-во лотов больше чем уже выставленно
-                if (steamItemCount > tmItemCoont && item.sellOrNot > tmItemCoont)
+                if (steamItemCount > tmItemCount && item.sellOrNot > tmItemCount)
                 {
-                    //делаем запрос на выставление товара
-                    [self itemToSellWithItem:item];
+                    do
+                    {
+                        [self itemToSellWithItem:item];
+                        tmItemCount++;
+                        
+                      //опять проверяем условие, если ок - выставляем еще раз
+                    } while (steamItemCount > tmItemCount && item.sellOrNot > tmItemCount);
                 }
             }];
         }];
@@ -708,7 +721,7 @@ static NSString *kSaveComissionKey   = @"KeyComission";
                                                         userInfo:nil
                                                          repeats:YES];
     
-    self.toSellTimer = [NSTimer scheduledTimerWithTimeInterval:15
+    self.toSellTimer = [NSTimer scheduledTimerWithTimeInterval:34
                                                           target:self
                                                         selector:@selector(launchRefreshItemToSell)
                                                         userInfo:nil

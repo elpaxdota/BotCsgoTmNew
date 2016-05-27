@@ -106,21 +106,16 @@
      */
     if ([classId isEqualToString:@"310776566"])
     {
-        int i = arc4random() % 3;
+        int i = arc4random() % 2;
         
         if (i == 0)
         {
-            instanceId = @"0";
+            instanceId = @"480085569";
         }
         else if (i == 1)
         {
             instanceId = @"302028390";
         }
-        else if (i == 2)
-        {
-            instanceId = @"480085569";
-        }
-
     }
     
     NSString *urlString = [NSString stringWithFormat:@"https://csgo.tm/api/SetPrice/new_%@_%@/%@/", classId, instanceId, price];
