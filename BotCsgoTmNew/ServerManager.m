@@ -13,7 +13,7 @@
 @interface ServerManager ()
 
 @property (strong, nonatomic) AFHTTPSessionManager *sessionManager;
-@property (strong, nonatomic) AFHTTPSessionManager *diffSessionManager;
+@property (strong, nonatomic) AFHTTPSessionManager *contentTypeSessionManager;
 
 @end
 
@@ -39,29 +39,25 @@
         NSURL *url = [NSURL URLWithString:@"https://csgo.tm/api/"];
         
         self.sessionManager = [[AFHTTPSessionManager alloc] initWithBaseURL:url];
+        
+        self.contentTypeSessionManager = [AFHTTPSessionManager manager];
+        
+        self.contentTypeSessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
+        
+        self.contentTypeSessionManager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
     }
     return self;
 }
 
 //================   Обновляю инвентарь   =======================
 
-/*
- Пришлось заколхозить в этом методе, т.к. почему то выдает ошибку
- что то про контент тайп в заголовке
-*/
 - (void) updateInventoryWithAPIKey:(NSString*)apiKey
                          onSuccess:(void(^)(NSString *message))success
                          onFailure:(void(^)(NSError *error))failure
 {
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
-    [manager GET:@"https://csgo.tm/api/UpdateInventory/"
+    [self.contentTypeSessionManager GET:@"https://csgo.tm/api/UpdateInventory/"
                   parameters:params
                     progress:nil
                      success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
@@ -84,11 +80,6 @@
 }
 
 //==============   Выставляю новый предмет   =====================
-
-/*
- Пришлось заколхозить в этом методе, т.к. почему то выдает ошибку
- что то про контент тайп в заголовке
- */
 
 - (void) itemToSellWithInstanceId:(NSString*)instanceId
                       classId:(NSString*)classId
@@ -121,14 +112,9 @@
     NSString *urlString = [NSString stringWithFormat:@"https://csgo.tm/api/SetPrice/new_%@_%@/%@/", classId, instanceId, price];
     
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:apiKey, @"key", nil];
+
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    
-    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"text/html"];
-    
-    [manager
+    [self.contentTypeSessionManager
      GET:urlString
      parameters:params
      progress:nil
